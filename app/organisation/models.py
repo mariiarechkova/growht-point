@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, Float, Integer, String
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
 
 from app.core.database import Base
 
@@ -13,5 +14,21 @@ class Organisation(Base):
     stability = Column(Float, default=1.5)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+    departments = relationship("Department", back_populates="organisation")
+
     def __repr__(self):
         return f"<Organisation name={self.name}>"
+
+
+class Department(Base):
+    __tablename__ = "departments"
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String(255), unique=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    organisation_id = Column(Integer, ForeignKey("organisations.id"), nullable=False)
+
+    organisation = relationship("Organisation", back_populates="departments")
+
+    def __repr__(self):
+        return f"<Organisation title={self.title}, organisation_id={self.organisation_id}>"
