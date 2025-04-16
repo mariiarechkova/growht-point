@@ -1,6 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import BaseModel, EmailStr, Field
 
@@ -28,7 +28,7 @@ class UserRead(UserBase):
     is_finish_sign_up: bool
     is_approve_role: bool
     created_at: datetime
-    roles: Optional[List[RoleRead]] = None
+    # roles: Optional[List[RoleRead]] = None
 
     model_config = {"from_attributes": True}
 
@@ -37,3 +37,17 @@ class UserRead(UserBase):
     #     json_encoders = {
     #         'id': 'first',  # это по-умолчанию .
     #     }
+
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class UserCreate(UserBase):
+    password: str = Field(..., min_length=8)

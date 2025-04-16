@@ -14,6 +14,21 @@ user_roles = Table(
 )
 
 
+class Role(Base):
+    __tablename__ = "roles"
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String(255), unique=True)
+    weight_vote = Column(Float)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    users = relationship("User", secondary=user_roles, back_populates="roles")
+
+    def __repr__(self):
+        return f"Title {self.title}"
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -29,11 +44,11 @@ class User(Base):
     is_approve_role = Column(Boolean, default=False)
     is_available_re_vote = Column(Boolean, default=False)
 
-    department_id = Column(Integer, ForeignKey("departments.id"), nullable=False)
-    organisation_id = Column(Integer, ForeignKey("organisations.id"), nullable=False)
+    department_id = Column(Integer, ForeignKey("departments.id"))
+    organisation_id = Column(Integer, ForeignKey("organisations.id"))
 
     # Relationships
-    department = relationship("Department", back_populates="users")
+    departments = relationship("Department", back_populates="users")
     organisation = relationship("Organisation", back_populates="users")
     profile = relationship("Profile", back_populates="user", uselist=False)
     roles = relationship("Role", secondary=user_roles, back_populates="users")
@@ -54,18 +69,3 @@ class Profile(Base):
 
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     user = relationship("User", back_populates="profile")
-
-
-class Roles(Base):
-    __tablename__ = "roles"
-
-    id = Column(Integer, primary_key=True)
-    title = Column(String(255), unique=True)
-    weight_vote = Column(Float)
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    user = relationship("User", secondary=user_roles, back_populates="roles")
-
-    def __repr__(self):
-        return f"Title {self.title}"
