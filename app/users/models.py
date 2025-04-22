@@ -22,8 +22,7 @@ class Role(Base):
     weight_vote = Column(Float)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    users = relationship("User", secondary=user_roles, back_populates="roles")
+    users = relationship("User", secondary=user_roles, back_populates="roles", lazy="selectin")
 
     def __repr__(self):
         return f"Title {self.title}"
@@ -51,7 +50,7 @@ class User(Base):
     departments = relationship("Department", back_populates="users")
     organisation = relationship("Organisation", back_populates="users")
     profile = relationship("Profile", back_populates="user", uselist=False)
-    roles = relationship("Role", secondary=user_roles, back_populates="users")
+    roles = relationship("Role", secondary=user_roles, back_populates="users", lazy="selectin")
 
     def __repr__(self):
         return f"<User {self.first_name} {self.last_name} ({self.email})>"

@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -28,7 +28,16 @@ async def get_current_user(
         raise HTTPException(status_code=401, detail="Invalid token")
 
     repo = UserRepository(session)
-    user = await repo.get_by_email(payload["email"])
+    user = await repo.get_user_by_email(payload["email"])
     if not user or user.id != user_id:
         raise HTTPException(status_code=401, detail="User not found")
     return user
+
+
+def require_admin_user(current_user: User = Depends(get_current_user)) -> User:
+    if not any(role.title == "admin" for role in current_user.roles):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have admin access",
+        )
+    return current_user

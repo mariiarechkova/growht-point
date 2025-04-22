@@ -2,14 +2,16 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
+from app.users.schemas import UserCreate, UserRead
+
 
 class OrganisationBase(BaseModel):
     name: str = Field(..., max_length=255)
     stability: float = Field(default=1.5, gt=1, lt=2)
 
 
-class OrganisationCreate(OrganisationBase):
-    pass
+class OrganisationAndUserCreate(OrganisationBase):
+    user: UserCreate
 
 
 class OrganisationRead(OrganisationBase):
@@ -21,6 +23,13 @@ class OrganisationRead(OrganisationBase):
 
 class OrganisationUpdate(BaseModel):
     stability: float = Field(..., gt=1, lt=2)
+
+
+class OrganisationWithUser(BaseModel):
+    organisation: OrganisationRead
+    user: UserRead
+
+    model_config = {"from_attributes": True}
 
 
 class DepartmentCreate(BaseModel):

@@ -1,6 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, EmailStr, Field
 
@@ -19,24 +19,14 @@ class RoleRead(BaseModel):
     model_config = {"from_attributes": True}
 
 
-def empty_list() -> list:
-    return []
-
-
 class UserRead(UserBase):
     id: int
     is_finish_sign_up: bool
     is_approve_role: bool
     created_at: datetime
-    # roles: Optional[List[RoleRead]] = None
+    roles: List[RoleRead] = Field(default_factory=list)
 
     model_config = {"from_attributes": True}
-
-    # class Config:
-    #     # Сортировка полей по порядку
-    #     json_encoders = {
-    #         'id': 'first',  # это по-умолчанию .
-    #     }
 
 
 class UserLogin(BaseModel):

@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import Department, Organisation
-from .schemas import DepartmentCreate, DepartmentUpdate, OrganisationCreate, OrganisationUpdate
+from .schemas import DepartmentCreate, DepartmentUpdate, OrganisationUpdate
 
 
 class OrganisationRepository:
@@ -19,13 +19,6 @@ class OrganisationRepository:
         organisation = result.scalar_one_or_none()
         if organisation is None:
             raise HTTPException(status_code=404, detail="Organisation not found")
-        return organisation
-
-    async def create(self, org_in: OrganisationCreate) -> Organisation:
-        organisation = Organisation(**org_in.model_dump())
-        self.session.add(organisation)
-        await self.session.commit()
-        await self.session.refresh(organisation)
         return organisation
 
     async def update(self, org_id: int, org_in: OrganisationUpdate) -> Organisation:
