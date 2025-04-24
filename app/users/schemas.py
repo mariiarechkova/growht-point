@@ -41,3 +41,9 @@ class Token(BaseModel):
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=8)
+
+
+class SendMassage(BaseModel):
+    type: str
+    value: str
+    text: str
