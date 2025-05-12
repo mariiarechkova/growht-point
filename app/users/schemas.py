@@ -2,7 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import List, Optional
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class UserBase(BaseModel):
@@ -16,7 +16,7 @@ class RoleRead(BaseModel):
     title: str
     weight_vote: Optional[Decimal] = None
 
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserRead(UserBase):
@@ -26,7 +26,7 @@ class UserRead(UserBase):
     created_at: datetime
     roles: List[RoleRead] = Field(default_factory=list)
 
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserLogin(BaseModel):

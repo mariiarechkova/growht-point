@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,6 +8,7 @@ from app.users.models import Role
 from app.users.repository import UserRepository
 from app.users.schemas import UserRead
 from app.utils.email_sender import send_welcome_email
+from app.voting.models import MainVoteEvent
 
 
 class OrganisationUserCreatorService:
@@ -20,7 +19,8 @@ class OrganisationUserCreatorService:
     async def create(self, data: OrganisationAndUserCreate):
         try:
             async with self._session.begin():
-                organisation = Organisation(name=data.name, created_at=datetime.utcnow())
+                organisation = Organisation(name=data.name)
+                organisation.main_vote_event = MainVoteEvent()
                 self._session.add(organisation)
                 await self._session.flush()
 

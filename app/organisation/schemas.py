@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.users.schemas import UserCreate, UserRead
 
@@ -18,7 +18,7 @@ class OrganisationRead(OrganisationBase):
     id: int
     created_at: datetime
 
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 class OrganisationUpdate(BaseModel):
@@ -29,14 +29,14 @@ class OrganisationWithUser(BaseModel):
     organisation: OrganisationRead
     user: UserRead
 
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 class DepartmentCreate(BaseModel):
     title: str = Field(..., max_length=255)
     organisation_id: int
 
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 class DepartmentRead(BaseModel):
@@ -44,7 +44,8 @@ class DepartmentRead(BaseModel):
     title: str
     organisation_id: int
     created_at: datetime
-    model_config = {"from_attributes": True}
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class DepartmentUpdate(BaseModel):

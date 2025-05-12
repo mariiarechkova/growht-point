@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,7 +12,7 @@ class OrganisationRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_all(self) -> list[Organisation]:
+    async def get_all(self) -> Sequence[Organisation]:
         result = await self.session.execute(select(Organisation))
         return result.scalars().all()
 
@@ -38,7 +40,7 @@ class DepartmentRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_all(self) -> list[Department]:
+    async def get_all(self) -> Sequence[Department]:
         result = await self.session.execute(select(Department))
         return result.scalars().all()
 

@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from faker import Faker
 from sqlalchemy import select
 
@@ -7,6 +5,7 @@ from app.core.database import async_session_maker
 from app.core.security import hash_password
 from app.organisation.models import Organisation
 from app.users.models import Role, User
+from app.voting.models import MainVoteEvent
 
 
 faker = Faker()
@@ -18,7 +17,8 @@ async def seed_admin_org():
             async with session.begin():
 
                 org_name = faker.company()
-                organisation = Organisation(name=org_name, created_at=datetime.utcnow())
+                organisation = Organisation(name=org_name)
+                organisation.main_vote_event = MainVoteEvent()
                 session.add(organisation)
 
                 result = await session.execute(select(Role).where(Role.title == "admin"))

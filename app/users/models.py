@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 
 from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, Numeric, String, Table, Text
 from sqlalchemy.orm import relationship
@@ -20,7 +20,7 @@ class Role(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String(255), unique=True)
     weight_vote = Column(Float)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
 
     users = relationship("User", secondary=user_roles, back_populates="roles", lazy="selectin")
 
@@ -38,7 +38,7 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
 
     is_finish_sign_up = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
     weight_vote = Column(Float)
     is_approve_role = Column(Boolean, default=False)
     is_available_re_vote = Column(Boolean, default=False)
@@ -66,5 +66,5 @@ class Profile(Base):
     salary = Column(Numeric(precision=10, scale=2))
     start_work_at = Column(DateTime)
 
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, unique=True)
     user = relationship("User", back_populates="profile")
