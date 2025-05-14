@@ -5,8 +5,17 @@ class OrganisationService:
     def __init__(self, repo: OrganisationRepository):
         self._repo = repo
 
-    async def get_all(self):
-        return await self._repo.get_all()
+    async def get_all(self, order_by: str = "created_at", order: str = "asc"):
+        return await self._repo.get_all(order_by=order_by, order=order)
+
+    # async def get_all(self, order_by: str = "created_at", order: str = "asc"):
+    #     organisations = await self._repo.get_all()
+    #
+    #     reverse = order == "desc"
+    #
+    #     sorted_organisations = sorted(organisations, key=lambda org: getattr(org, order_by), reverse=reverse)
+    #
+    #     return sorted_organisations
 
     async def get_by_id(self, org_id: int):
         return await self._repo.get_by_id(org_id)

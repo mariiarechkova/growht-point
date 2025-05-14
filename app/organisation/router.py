@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Path, status
+from fastapi import APIRouter, Depends, Path, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_session
@@ -14,8 +14,12 @@ router = APIRouter(prefix="/api/organisations", tags=["Organisations"])
 
 
 @router.get("/", response_model=list[schemas.OrganisationRead])
-async def list_organisations(service: OrganisationService = Depends(get_organisation_service)):
-    return await service.get_all()
+async def list_organisations(
+    order_by: str = Query("created_at", enum=["name", "created_at"]),
+    order: str = Query("asc", enum=["asc", "desc"]),
+    service: OrganisationService = Depends(get_organisation_service),
+):
+    return await service.get_all(order_by, order)
 
 
 @router.get("/departments", response_model=list[schemas.DepartmentRead], dependencies=[Depends(require_admin_user)])

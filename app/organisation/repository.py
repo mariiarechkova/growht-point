@@ -1,7 +1,7 @@
 from typing import Sequence
 
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import asc, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import Department, Organisation
@@ -12,9 +12,17 @@ class OrganisationRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_all(self) -> Sequence[Organisation]:
-        result = await self.session.execute(select(Organisation))
+    async def get_all(self, order_by: str, order: str):
+        order_func = asc if order == "asc" else desc
+        column = getattr(Organisation, order_by)
+        stmt = select(Organisation).order_by(order_func(column))
+        result = await self.session.execute(stmt)
         return result.scalars().all()
+
+    #
+    # async def get_all(self) -> Sequence[Organisation]:
+    #     result = await self.session.execute(select(Organisation))
+    #     return result.scalars().all()
 
     async def get_by_id(self, org_id: int) -> Organisation:
         result = await self.session.execute(select(Organisation).where(Organisation.id == org_id))
