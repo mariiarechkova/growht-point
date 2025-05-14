@@ -19,11 +19,19 @@ class RoleRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class ProfileRead(BaseModel):
+    id: int
+    job_title: Optional[str] = None
+    salary: Optional[Decimal] = None
+
+
 class UserRead(UserBase):
     id: int
     is_finish_sign_up: bool
     is_approve_role: bool
     created_at: datetime
+    profile: ProfileRead
+    department_id: Optional[int] = None
     roles: List[RoleRead] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)

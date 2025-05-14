@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import datetime
 
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
@@ -12,7 +12,7 @@ class Organisation(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), unique=True, nullable=False)
     stability = Column(Float, default=1.5)
-    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+    created_at = Column(DateTime, default=datetime.utcnow)
 
     departments = relationship("Department", back_populates="organisation")
     users = relationship("User", back_populates="organisation")
@@ -27,7 +27,7 @@ class Department(Base):
 
     id = Column(Integer, primary_key=True)
     title = Column(String(255), unique=True, nullable=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+    created_at = Column(DateTime, default=datetime.utcnow)
     organisation_id = Column(Integer, ForeignKey("organisations.id"), nullable=False)
 
     organisation = relationship("Organisation", back_populates="departments")
