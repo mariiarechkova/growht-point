@@ -1,17 +1,19 @@
 from sqlalchemy import select
 
-from app.core.database import async_session_maker
 from app.users.models import Role
+from app.users.schemas import RoleEnum
 
 
-async def seed_roles():
-    async with async_session_maker() as session:
-        result = await session.execute(select(Role).where(Role.title == "admin"))
-        role = result.scalar_one_or_none()
+async def seed_roles(session):
+    result = await session.execute(select(Role).where(Role.title == RoleEnum.ADMIN))
+    role = result.scalar_one_or_none()
 
-        if not role:
-            session.add(Role(title="admin"))
-            await session.commit()
-            print("Role 'admin' created")
-        else:
-            print("Role 'admin' already exists")
+    if not role:
+        role = Role(title=RoleEnum.ADMIN)
+        session.add(role)
+        await session.flush()  # use flash instead of commit
+        print("Role 'admin' created")
+    else:
+        print("Role 'admin' already exists")
+
+    return role
