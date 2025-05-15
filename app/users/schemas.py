@@ -1,8 +1,13 @@
 from datetime import datetime
 from decimal import Decimal
+from enum import Enum
 from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
+
+class RoleEnum(str, Enum):
+    ADMIN = "admin"
 
 
 class UserBase(BaseModel):
@@ -13,7 +18,7 @@ class UserBase(BaseModel):
 
 class RoleRead(BaseModel):
     id: int
-    title: str
+    title: RoleEnum
     weight_vote: Optional[Decimal] = None
 
     model_config = ConfigDict(from_attributes=True)
