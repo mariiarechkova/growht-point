@@ -1,23 +1,21 @@
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import asc, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
 from ..core.security import hash_password
 from .models import User
 from .schemas import UserCreate
 
 
-# from .schemas import UserRead
-
-
 class UserRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_all(self, org_id: int) -> list[User]:
+    async def get_all(self, org_id: int, order_by: str, order: str):
+        order_func = asc if order == "asc" else desc
+        column = getattr(User, order_by)
         result = await self.session.execute(
-            select(User).options(selectinload(User.roles)).where(User.organisation_id == org_id)
+            select(User).where(User.organisation_id == org_id).order_by(order_func(column))
         )
         return result.scalars().all()
 

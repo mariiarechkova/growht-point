@@ -7,6 +7,7 @@ from app.users.dependencies import get_user_repository
 from app.users.repository import UserRepository
 
 
+#
 router = APIRouter(prefix="/api/auth", tags=["Auth"])
 
 

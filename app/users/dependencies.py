@@ -6,6 +6,14 @@ from app.core.database import get_session
 from app.core.security import decode_access_token
 from app.users.models import User
 from app.users.repository import UserRepository
+from app.users.services.user_services import UserService
+
+
+def get_user_service(
+    session: AsyncSession = Depends(get_session),
+) -> UserService:
+    repo = UserRepository(session)
+    return UserService(repo)
 
 
 def get_user_repository(

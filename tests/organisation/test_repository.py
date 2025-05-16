@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 from fastapi import HTTPException
 
@@ -6,16 +8,28 @@ from app.organisation.repository import DepartmentRepository, OrganisationReposi
 from app.organisation.schemas import DepartmentCreate, DepartmentUpdate, OrganisationUpdate
 
 
+@pytest.mark.parametrize(
+    "order_by, order, expected_names",
+    [
+        ("name", "asc", ["Alpha", "Beta", "Gamma"]),
+        ("name", "desc", ["Gamma", "Beta", "Alpha"]),
+        ("created_at", "asc", ["Alpha", "Beta", "Gamma"]),
+        ("created_at", "desc", ["Gamma", "Beta", "Alpha"]),
+    ],
+)
 @pytest.mark.asyncio
-async def test_get_all_organisations(async_session):
+async def test_get_all_organisations(async_session, order_by, order, expected_names):
     repo = OrganisationRepository(async_session)
-    async_session.add_all([Organisation(name="Org1"), Organisation(name="Org2")])
+    org1 = Organisation(name="Beta", created_at=datetime.datetime(2024, 1, 1))
+    org2 = Organisation(name="Alpha", created_at=datetime.datetime(2023, 6, 1))
+    org3 = Organisation(name="Gamma", created_at=datetime.datetime(2025, 1, 1))
+    async_session.add_all([org1, org2, org3])
     await async_session.commit()
 
-    result = await repo.get_all()
-    assert len(result) == 2
-    assert result[0].name == "Org1"
-    assert result[1].name == "Org2"
+    result = await repo.get_all(order_by=order_by, order=order)
+
+    assert len(result) == 3
+    assert [o.name for o in result] == expected_names
 
 
 @pytest.mark.asyncio
@@ -57,7 +71,7 @@ async def test_delete_organisation(async_session):
     await async_session.commit()
 
     await repo.delete(org.id)
-    result = await repo.get_all()
+    result = await repo.get_all("created_at", "asc")
     assert len(result) == 0
 
 

@@ -3,9 +3,7 @@ import pytest_asyncio
 from fastapi import status
 from sqlalchemy import insert
 
-from app.main import app
 from app.organisation.models import Department, Organisation
-from app.users.dependencies import require_admin_user
 from app.users.models import Role
 
 
@@ -18,13 +16,6 @@ async def seeded_organisations(async_session):
     async_session.add_all(orgs)
     await async_session.commit()
     return orgs
-
-
-@pytest.fixture
-def override_admin_auth():
-    app.dependency_overrides[require_admin_user] = lambda: None
-    yield
-    app.dependency_overrides.clear()
 
 
 @pytest.mark.asyncio
