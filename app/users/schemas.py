@@ -35,7 +35,7 @@ class UserRead(UserBase):
     is_finish_sign_up: bool
     is_approve_role: bool
     created_at: datetime
-    profile: ProfileRead
+    profile: Optional[ProfileRead] = None
     department_id: Optional[int] = None
     roles: List[RoleRead] = Field(default_factory=list)
 
