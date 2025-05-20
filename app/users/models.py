@@ -47,7 +47,7 @@ class User(Base):
     organisation_id = Column(Integer, ForeignKey("organisations.id"))
 
     # Relationships
-    departments = relationship("Department", back_populates="users")
+    department = relationship("Department", back_populates="users")
     organisation = relationship("Organisation", back_populates="users")
     profile = relationship("Profile", back_populates="user", uselist=False, lazy="selectin")
     roles = relationship("Role", secondary=user_roles, back_populates="users", lazy="selectin")

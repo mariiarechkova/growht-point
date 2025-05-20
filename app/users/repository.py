@@ -1,22 +1,33 @@
 from fastapi import HTTPException
-from sqlalchemy import asc, desc, select
+from sqlalchemy import asc, desc, nulls_last, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from ..core.security import hash_password
+from ..organisation.models import Department
 from .models import User
 from .schemas import UserCreate
+
+
+# def build_select_query(order_by, org_id, order_func, column):
+#     if order_by == 'department_id':
+#         return select(User).where(User.organisation_id == org_id).order_by(order_func(column), desc(User.id))
+#     return select(User).where(User.organisation_id == org_id).order_by(order_func(column))
 
 
 class UserRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_all(self, org_id: int, order_by: str, order: str):
-        order_func = asc if order == "asc" else desc
-        column = getattr(User, order_by)
-        result = await self.session.execute(
-            select(User).where(User.organisation_id == org_id).order_by(order_func(column))
+    async def get_all(self, org_id: int):
+        stmt = (
+            select(User)
+            .outerjoin(Department, User.department_id == Department.id)
+            .options(joinedload(User.department))
+            .where(User.organisation_id == org_id)
+            .order_by(nulls_last(asc(Department.title)), desc(User.first_name))
         )
+        result = await self.session.execute(stmt)
         return result.scalars().all()
 
     async def get_user_by_id(self, user_id: int) -> User:
