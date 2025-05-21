@@ -31,7 +31,7 @@ class Department(Base):
     organisation_id = Column(Integer, ForeignKey("organisations.id"), nullable=False)
 
     organisation = relationship("Organisation", back_populates="departments")
-    users = relationship("User", back_populates="departments")
+    users = relationship("User", back_populates="department")
 
     def __repr__(self):
         return f"<Organisation title={self.title}, organisation_id={self.organisation_id}>"

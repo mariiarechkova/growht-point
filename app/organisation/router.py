@@ -7,6 +7,7 @@ from app.organisation.dependencies import get_department_service, get_organisati
 from app.organisation.schemas import OrganisationAndUserCreate
 from app.organisation.services.common_services import DepartmentService, OrganisationService
 from app.organisation.services.organisation_user_create import OrganisationUserCreatorService
+from app.schemas_base import DepartmentRead
 from app.users.dependencies import require_admin_user
 
 
@@ -22,7 +23,7 @@ async def list_organisations(
     return await service.get_all(order_by, order)
 
 
-@router.get("/departments", response_model=list[schemas.DepartmentRead], dependencies=[Depends(require_admin_user)])
+@router.get("/departments", response_model=list[DepartmentRead], dependencies=[Depends(require_admin_user)])
 async def list_departments(service: DepartmentService = Depends(get_department_service)):
     return await service.get_all()
 
@@ -64,9 +65,7 @@ async def delete_organisation(org_id: int, service: OrganisationService = Depend
     await service.delete(org_id)
 
 
-@router.get(
-    "/departments/{department_id}", response_model=schemas.DepartmentRead, dependencies=[Depends(require_admin_user)]
-)
+@router.get("/departments/{department_id}", response_model=DepartmentRead, dependencies=[Depends(require_admin_user)])
 async def get_department(
     department_id: int = Path(..., gt=0), service: DepartmentService = Depends(get_department_service)
 ):
@@ -75,7 +74,7 @@ async def get_department(
 
 @router.post(
     "/departments",
-    response_model=schemas.DepartmentRead,
+    response_model=DepartmentRead,
     status_code=status.HTTP_201_CREATED,
     dependencies=[Depends(require_admin_user)],
 )
@@ -87,7 +86,7 @@ async def create_department(
 
 @router.patch(
     "/departments/{dept_id}",
-    response_model=schemas.DepartmentRead,
+    response_model=DepartmentRead,
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(require_admin_user)],
 )

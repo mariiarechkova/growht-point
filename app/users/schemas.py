@@ -5,6 +5,8 @@ from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
+from app.schemas_base import DepartmentRead
+
 
 class RoleEnum(str, Enum):
     ADMIN = "admin"
@@ -36,9 +38,8 @@ class UserRead(UserBase):
     is_approve_role: bool
     created_at: datetime
     profile: Optional[ProfileRead] = None
-    department_id: Optional[int] = None
+    department: Optional[DepartmentRead] = None
     roles: List[RoleRead] = Field(default_factory=list)
-
     model_config = ConfigDict(from_attributes=True)
 
 
